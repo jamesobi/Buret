@@ -5,8 +5,6 @@ class MainScene: CCNode, CCPhysicsCollisionDelegate {
     weak var myPhysicsNode:CCPhysicsNode!
     
     
-    var sizes:[CCSprite] = []
-    
     
     
     
@@ -15,22 +13,35 @@ class MainScene: CCNode, CCPhysicsCollisionDelegate {
         myPhysicsNode.collisionDelegate = self
         myPhysicsNode.debugDraw = true
         
-        sizes.append(CCBReader.load("BlueBallOne") as! CCSprite)
-        sizes.append(CCBReader.load("BlueBallTwo") as! CCSprite)
-        sizes.append(CCBReader.load("BlueBallThree") as! CCSprite)
-        sizes.append(CCBReader.load("BlueBallFour") as! CCSprite)
-        sizes.append(CCBReader.load("BlueBallFive") as! CCSprite)
+        loadLevelOne()
+        
+        
+    }
+    
+    func loadLevelOne() {
+        
+        for var yVal = 200; yVal <= 280; yVal += 40 {
+            for var xValue = 40; xValue <= 280; xValue += 30 {
+                var temporaryBlueBall = CCBReader.load("BlueBall")
+                temporaryBlueBall.scaleX = 0.25
+                temporaryBlueBall.scaleY = 0.25
+                temporaryBlueBall.position = ccp(CGFloat(xValue), CGFloat(yVal))
+                myPhysicsNode.addChild(temporaryBlueBall)
+            }
+        }
     }
     
     override func touchBegan(touch: CCTouch!, withEvent event: CCTouchEvent!) {
-        var temporaryRedBall = CCBReader.load("RedBall") as! CCSprite
-        temporaryRedBall.position = touch.locationInWorld()
-        temporaryRedBall.scaleX = Float(0.25)
-        temporaryRedBall.scaleY = Float(0.25)
+        if touch.locationInWorld().y > 290 && touch.locationInWorld().y < 490 {
+            var temporaryRedBall = CCBReader.load("RedBall") as! CCSprite
+            temporaryRedBall.position = touch.locationInWorld()
+            temporaryRedBall.scaleX = Float(0.25)
+            temporaryRedBall.scaleY = Float(0.25)
         
     
-        myPhysicsNode.addChild(temporaryRedBall)
-        println("clicked at: \(touch.locationInWorld())")
+            myPhysicsNode.addChild(temporaryRedBall)
+            println("clicked at: \(touch.locationInWorld())")
+        }
         
     }
     
@@ -56,60 +67,35 @@ class MainScene: CCNode, CCPhysicsCollisionDelegate {
     }
     
     
-//    func ccPhysicsCollisionBegin(pair: CCPhysicsCollisionPair!, redBall aRedBall: CCNode!, blueBall aBlueBall: CCNode!) -> ObjCBool {
-//        
-////        switch aBlueBall.boundingBox().width:
-////        case 130.5 {
-////            currentSize = 5
-////        }
-////        case 104.4 {
-////            currentSize = 4
-////        }
-////        case 78.3 {
-////        currentSize = 3
-////        }
-////
-////        case 52.2 {
-////        currentSize = 2
-////        }
-////
-////        case 26.1 {
-////        currentSize = 1
-////        }
-////        default {
-////            aBlueBall.removeFromParent
-////        }
-//
-//        
-//        
-//        
-//        
-//        return true
-//    }
-    
     func ccPhysicsCollisionBegin(pair: CCPhysicsCollisionPair!, redBall aRedBall: CCNode!, blueBall aBlueBall: CCNode!) -> ObjCBool {
-        println("collision detected")
-        var newX = aBlueBall.scaleX - 0.1
-        var newY = aBlueBall.scaleY - 0.1
+//        println("collision detected")
+//        var newX = aBlueBall.scaleX - 0.1
+//        var newY = aBlueBall.scaleY - 0.1
+//        
+//        if newX > 0.0 && newY > 0.0 {
+//            aBlueBall.scaleX = newX
+//            aBlueBall.scaleY = newY
+//            
+//            //aBlueBall.physicsBody.shapeList.rescaleShape()
+//            
+//            
+//            myPhysicsNode.space.addPostStepBlock({() -> Void in
+//                self.scaleCircle(aBlueBall, scaleValue: -0.1)
+//            }, key: aBlueBall)
+//            
+//            
+//        } else if newX <= 0 && newY <= 0 {
+//            aBlueBall.removeFromParent()
+//            println("blueBall removed")
+//        }
         
-        if newX > 0.0 && newY > 0.0 {
-            aBlueBall.scaleX = newX
-            aBlueBall.scaleY = newY
-            
-            //aBlueBall.physicsBody.shapeList.rescaleShape()
-            
-            
-            myPhysicsNode.space.addPostStepBlock({() -> Void in
-                self.scaleCircle(aBlueBall, scaleValue: -0.1)
-            }, key: aBlueBall)
-            
-            
-        } else if newX <= 0 && newY <= 0 {
-            aBlueBall.removeFromParent()
-            println("blueBall removed")
+        
+        if let realRedBall = aRedBall {
+            aRedBall.removeFromParent()
+            if let realBlueBall = aBlueBall {
+                aBlueBall.removeFromParent()
+            }
         }
-        
-        aRedBall.removeFromParent()
         
         return true
     }
